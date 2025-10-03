@@ -11,16 +11,16 @@ sealed class Result<S, E extends AppException> extends Equatable {
 final class Success<S, E extends AppException> extends Result<S, E> {
   const Success(this.value);
   final S value;
-  
+
   @override
-  List<Object?> get props => [value]
+  List<Object?> get props => [value];
 }
 
 // Represents a failure result.
 final class Failure<S, E extends AppException> extends Result<S, E> {
   const Failure(this.exception);
   final E exception;
-  
+
   @override
   List<Object?> get props => [exception];
 }
