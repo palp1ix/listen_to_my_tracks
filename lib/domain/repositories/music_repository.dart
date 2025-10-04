@@ -12,4 +12,6 @@ abstract interface class MusicRepository {
     required String query,
   });
 
+  // Returns a list of chart-topping tracks.
+  Future<Result<List<TrackEntity>, AppException>> getChart();
 }

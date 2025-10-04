@@ -16,12 +16,8 @@ class MainApp extends StatelessWidget {
       // The dark theme is used when the system requests it.
       darkTheme: AppTheme.darkTheme,
       // This makes the app theme react to system settings.
-      themeMode: ThemeMode.system, 
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+      themeMode: ThemeMode.system,
+      home: Scaffold(body: Center(child: Text('Hello World!'))),
     );
   }
 }
