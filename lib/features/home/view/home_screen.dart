@@ -185,7 +185,7 @@ class _ChartTrackListItem extends StatelessWidget {
               child: Text(
                 '$rank',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
                 ),
               ),
             ),
