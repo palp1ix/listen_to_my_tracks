@@ -52,7 +52,7 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
       if (response.statusCode == 200) {
         // The API wraps the list of tracks in a 'data' object.
         // The TrackSearchResponse model is used to parse this structure.
-        final searchResult = TrackSearchResponse.fromJson(response.data);
+        final searchResult = TrackSearchResponse.fromJson(response.data['tracks']);
         return searchResult.data;
       } else {
         // Handle non-200 responses as server exceptions.
