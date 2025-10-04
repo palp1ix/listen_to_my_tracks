@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:listen_to_my_tracks/core/widgets/track_list_tile.dart';
-import 'package:listen_to_my_tracks/domain/entities/track.dart';
 import 'package:listen_to_my_tracks/features/search/bloc/search_bloc.dart';
 
 class SearchResultsScreen extends StatefulWidget {
