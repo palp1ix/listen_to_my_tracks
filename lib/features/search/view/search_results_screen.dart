@@ -1,14 +1,15 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:listen_to_my_tracks/core/widgets/track_list_tile.dart';
+import 'package:listen_to_my_tracks/data/datasources/music_remote_datasource.dart';
+import 'package:listen_to_my_tracks/data/repositories/music_repository_impl.dart';
 import 'package:listen_to_my_tracks/features/search/bloc/search_bloc.dart';
 
 @RoutePage()
 class SearchResultsScreen extends StatefulWidget {
-  const SearchResultsScreen({super.key, required this.query});
-  // The search query to look for tracks.
-  final String query;
+  const SearchResultsScreen({super.key});
 
   @override
   State<SearchResultsScreen> createState() => _SearchResultsScreenState();
@@ -17,15 +18,33 @@ class SearchResultsScreen extends StatefulWidget {
 class _SearchResultsScreenState extends State<SearchResultsScreen> {
   late final SearchBloc _searchBloc;
   late final TextEditingController _controller;
+  late final FocusNode _focusNode; // 1. Declare the FocusNode.
 
   @override
   void initState() {
     // Initialize the SearchBloc with the MusicRepositoryImpl.
-    _searchBloc = context.read<SearchBloc>();
-    // Trigger the search when the screen is initialized.
-    _searchBloc.add(SearchRequested(widget.query));
-    // Initialize the text controller with the initial query.
-    _controller = TextEditingController(text: widget.query);
+    _searchBloc = SearchBloc(
+      MusicRepositoryImpl(
+        remoteDataSource: MusicRemoteDataSourceImpl(
+          dio: Dio(BaseOptions(baseUrl: 'https://api.deezer.com')),
+        ),
+      ),
+    );
+    // Initialize the text controller.
+    _controller = TextEditingController();
+
+    // Initialize the FocusNode.
+    _focusNode = FocusNode();
+
+    // Request focus after the first frame has been rendered.
+    // This ensures that the widget tree is built and ready to accept focus.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Check if the widget is still in the tree.
+      if (mounted) {
+        _focusNode.requestFocus();
+      }
+    });
+
     super.initState();
   }
 
@@ -45,18 +64,31 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: TextField(
-                controller: _controller,
-                style: TextStyle(color: theme.hintColor),
-                decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.clear_rounded, color: theme.hintColor),
+              padding: const EdgeInsets.only(right: 15, left: 5),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back),
                     onPressed: () {
-                      // TODO: Should return to previous page
+                      context.router.pop();
                     },
                   ),
-                ),
+                  SizedBox(width: 5),
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      focusNode:
+                          _focusNode, // Assign the FocusNode to the TextField.
+                      onSubmitted: (value) {
+                        _searchBloc.add(SearchRequested(value));
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Search for tracks, artists, albums...',
+                      ),
+                      style: TextStyle(color: theme.hintColor),
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 10),

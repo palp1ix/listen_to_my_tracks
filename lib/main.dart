@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:listen_to_my_tracks/app/resources/theme.dart';
 import 'package:listen_to_my_tracks/app/router/router.dart';
-import 'package:listen_to_my_tracks/features/home/view/home_screen.dart';
 
 void main() {
   runApp(const MainApp());
