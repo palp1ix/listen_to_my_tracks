@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 abstract class AppTheme {
   const AppTheme._();
-  
+
   // Font Family
   static final String _fontFamily = GoogleFonts.poppins().fontFamily!;
 
@@ -49,8 +49,11 @@ abstract class AppTheme {
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.lightBackground,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        fillColor: AppColors.lightSurface,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -60,10 +63,8 @@ abstract class AppTheme {
           fontWeight: FontWeight.w400,
         ),
       ),
-      
-      listTileTheme: const ListTileThemeData(
-        iconColor: AppColors.primary,
-      ),
+
+      listTileTheme: const ListTileThemeData(iconColor: AppColors.primary),
     );
   }
 
@@ -90,7 +91,7 @@ abstract class AppTheme {
         bodyColor: AppColors.onDarkSurface,
         displayColor: AppColors.onDarkSurface,
       ),
-      
+
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.darkBackground,
         foregroundColor: AppColors.onDarkSurface,
@@ -109,7 +110,10 @@ abstract class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.darkSurface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -119,10 +123,8 @@ abstract class AppTheme {
           fontWeight: FontWeight.w400,
         ),
       ),
-      
-      listTileTheme: const ListTileThemeData(
-        iconColor: AppColors.primaryLight,
-      ),
+
+      listTileTheme: const ListTileThemeData(iconColor: AppColors.primaryLight),
     );
   }
 
@@ -132,6 +134,10 @@ abstract class AppTheme {
     titleMedium: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
     bodyLarge: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
     bodyMedium: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
-    labelLarge: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, letterSpacing: 0.5),
+    labelLarge: TextStyle(
+      fontWeight: FontWeight.w500,
+      fontSize: 14,
+      letterSpacing: 0.5,
+    ),
   );
 }
