@@ -1,8 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:listen_to_my_tracks/core/widgets/track_list_tile.dart';
 import 'package:listen_to_my_tracks/features/search/bloc/search_bloc.dart';
 
+@RoutePage()
 class SearchResultsScreen extends StatefulWidget {
   const SearchResultsScreen({super.key, required this.query});
   // The search query to look for tracks.
