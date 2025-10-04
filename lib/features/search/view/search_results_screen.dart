@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:listen_to_my_tracks/core/widgets/track_list_tile.dart';
+import 'package:listen_to_my_tracks/domain/entities/track.dart';
 import 'package:listen_to_my_tracks/features/search/bloc/search_bloc.dart';
 
 class SearchResultsScreen extends StatefulWidget {
@@ -78,23 +80,10 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                         itemCount: results.length,
                         itemBuilder: (context, index) {
                           final track = results[index];
-                          return ListTile(
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: FadeInImage.assetNetwork(
-                                placeholder:
-                                    'assets/images/image-placeholder.png',
-                                image: track.album.coverUrl,
-                                width: 56,
-                                height: 56,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            title: Text(
-                              track.title,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text(track.artist.name),
+                          return TrackListTile(
+                            trackTitle: track.title,
+                            artist: track.artist.name,
+                            imageUrl: track.album.coverUrl,
                           );
                         },
                       );
