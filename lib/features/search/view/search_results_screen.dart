@@ -27,13 +27,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   void initState() {
     super.initState();
     // DI logic is left as is, as requested.
-    _searchBloc = SearchBloc(
-      MusicRepositoryImpl(
-        remoteDataSource: MusicRemoteDataSourceImpl(
-          dio: Dio(BaseOptions(baseUrl: 'https://api.deezer.com')),
-        ),
-      ),
-    );
+    _searchBloc = context.read<SearchBloc>();
     _controller = TextEditingController();
     _focusNode = FocusNode();
 
@@ -68,16 +62,14 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
               focusNode: _focusNode,
               onSubmitted: (query) {
                 // Hide keyboard on submit
-                _focusNode.unfocus(); 
+                _focusNode.unfocus();
                 _searchBloc.add(SearchRequested(query));
               },
             ),
             const SizedBox(height: 10),
             // The Expanded widget ensures the results body takes up
             // all available vertical space.
-            Expanded(
-              child: _SearchResultsBody(searchBloc: _searchBloc),
-            ),
+            Expanded(child: _SearchResultsBody(searchBloc: _searchBloc)),
           ],
         ),
       ),
@@ -88,7 +80,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 // This widget handles the presentation logic based on the SearchBloc's state.
 class _SearchResultsBody extends StatelessWidget {
   const _SearchResultsBody({required this.searchBloc});
-  
+
   final SearchBloc searchBloc;
 
   @override
@@ -98,17 +90,18 @@ class _SearchResultsBody extends StatelessWidget {
       builder: (context, state) {
         return switch (state) {
           SearchInitial() => const _InfoView(
-              icon: Icons.search,
-              message: 'Please enter a search query.',
-            ),
+            icon: Icons.search,
+            message: 'Please enter a search query.',
+          ),
           SearchLoading() => const Center(child: CircularProgressIndicator()),
           SearchFailure(:final message) => _ErrorView(message: message),
-          SearchSuccess(:final results) => results.isEmpty
-              ? const _InfoView(
-                  icon: Icons.search_off,
-                  message: 'No results found.',
-                )
-              : _ResultsListView(results: results),
+          SearchSuccess(:final results) =>
+            results.isEmpty
+                ? const _InfoView(
+                    icon: Icons.search_off,
+                    message: 'No results found.',
+                  )
+                : _ResultsListView(results: results),
         };
       },
     );
@@ -191,7 +184,9 @@ class _ErrorView extends StatelessWidget {
             // searched query to dispatch the event again.
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () { /* Retry logic here */ },
+              onPressed: () {
+                /* Retry logic here */
+              },
               child: const Text('Retry'),
             ),
           ],
