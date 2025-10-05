@@ -6,9 +6,12 @@ import 'package:listen_to_my_tracks/app/router/router.dart';
 import 'package:listen_to_my_tracks/features/home/bloc/home_bloc.dart';
 import 'package:listen_to_my_tracks/features/search/bloc/search_bloc.dart';
 
-void main() {
+void main() async {
   // This is required to ensure that plugin services are initialized
   WidgetsFlutterBinding.ensureInitialized();
+  // Initialize all dependencies before running the app.
+  await configureDependencies();
+  // Start the app.
   runApp(const MainApp());
 }
 
