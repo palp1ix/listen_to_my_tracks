@@ -35,4 +35,24 @@ class MusicRepositoryImpl implements MusicRepository {
       return Failure(e);
     }
   }
+
+
+    @override
+  Future<Result<List<TrackEntity>, AppException>> getChart() async {
+    try {
+      // 1. Fetch data models from the remote data source.
+      final trackModels = await _remoteDataSource.getChart();
+
+      // 2. Map the data models to domain entities.
+      final trackEntities = trackModels.map((model) => model.toEntity()).toList();
+
+      // 3. Return a successful result, wrapping the domain entities.
+      return Success(trackEntities);
+    } on AppException catch (e) {
+      // 4. If any AppException is thrown by the data source, catch it
+      //    and return a failure result. This ensures that the upper layers
+      //    (UseCases/BLoCs) only have to deal with the clean Result type.
+      return Failure(e);
+    }
+  }
 }
