@@ -24,13 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _homeBloc = HomeBloc(
-      MusicRepositoryImpl(
-        remoteDataSource: MusicRemoteDataSourceImpl(
-          dio: Dio(BaseOptions(baseUrl: 'https://api.deezer.com')),
-        ),
-      ),
-    );
+    _homeBloc = context.read<HomeBloc>();
     _homeBloc.add(const HomeScreenStarted());
   }
 
