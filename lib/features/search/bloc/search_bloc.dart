@@ -11,6 +11,11 @@ part 'search_state.dart';
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc(this._musicRepository) : super(SearchInitial()) {
     on<SearchRequested>(_onSearchRequested);
+    on<SearchCleared>(_onSearchCleared);
+  }
+
+  FutureOr<void> _onSearchCleared(event, emit) {
+    emit(SearchInitial());
   }
 
   final MusicRepository _musicRepository;

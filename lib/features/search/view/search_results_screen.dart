@@ -38,9 +38,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
   @override
   void dispose() {
-    // It's crucial to dispose of all controllers and close BLoCs
-    // to prevent memory leaks.
-    _searchBloc.close();
+    _searchBloc.add(SearchCleared());
     _controller.dispose();
     _focusNode.dispose();
     super.dispose();

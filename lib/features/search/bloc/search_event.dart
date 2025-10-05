@@ -15,3 +15,7 @@ final class SearchRequested extends SearchEvent {
   @override
   List<Object> get props => [query];
 }
+
+final class SearchCleared extends SearchEvent {
+  const SearchCleared();
+}
