@@ -5,16 +5,19 @@ class TrackListTile extends StatelessWidget {
     super.key,
     required this.imageUrl,
     required this.trackTitle,
-    required this.artist,
+    required this.artist, 
+    required this.onTap,
   });
 
   final String imageUrl;
   final String trackTitle;
   final String artist;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: onTap,
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: FadeInImage.assetNetwork(
