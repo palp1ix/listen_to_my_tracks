@@ -6,10 +6,23 @@ import 'package:listen_to_my_tracks/features/details/bloc/track_player_bloc.dart
 import 'package:share_plus/share_plus.dart';
 
 @RoutePage()
-class TrackDetailsScreen extends StatelessWidget {
+class TrackDetailsScreen extends StatefulWidget {
   const TrackDetailsScreen({super.key, required this.track});
 
   final TrackEntity track;
+
+  @override
+  State<TrackDetailsScreen> createState() => _TrackDetailsScreenState();
+}
+
+class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
+  late final TrackPlayerBloc _trackBloc;
+
+  @override
+  void initState() {
+    _trackBloc = context.read<TrackPlayerBloc>();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,20 +33,25 @@ class TrackDetailsScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.keyboard_arrow_down),
-          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            _trackBloc.add(PauseRequested());
+            Navigator.of(context).pop();
+          },
         ),
         actions: [
           PopupMenuButton<void>(
             onSelected: (_) {
-              SharePlus.instance.share(ShareParams(uri: Uri(path: track.link)));
+              SharePlus.instance.share(
+                ShareParams(uri: Uri(path: widget.track.link)),
+              );
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<void>>[
               const PopupMenuItem<void>(
                 value: null,
                 child: Row(
                   children: [
-                    Icon(Icons.share_outlined),
+                    Icon(Icons.share),
                     SizedBox(width: 8),
                     Text('Share'),
                   ],
@@ -45,16 +63,18 @@ class TrackDetailsScreen extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           children: [
-            const Spacer(),
-            _TrackInfoSection(title: track.title, artist: track.artist.name),
-            const Spacer(),
-            _AlbumArtSection(coverUrl: track.album.coverUrl),
-            const Spacer(),
+            _TrackInfoSection(
+              title: widget.track.title,
+              artist: widget.track.artist.name,
+            ),
+            SizedBox(height: 20),
+            _AlbumArtSection(coverUrl: widget.track.album.coverUrl),
+            SizedBox(height: 20),
             // The _PlayerSection is now connected to the BLoC.
-            _PlayerSection(track),
+            _PlayerSection(widget.track),
             const Spacer(flex: 2),
           ],
         ),
@@ -105,11 +125,14 @@ class _AlbumArtSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ... no changes here
-    return AspectRatio(
-      aspectRatio: 1,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Image.network(coverUrl, fit: BoxFit.cover),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Image.network(coverUrl, fit: BoxFit.cover),
+        ),
       ),
     );
   }
@@ -145,6 +168,8 @@ class _PlayerSectionState extends State<_PlayerSection> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     // BlocBuilder rebuilds the widget in response to new states from TrackPlayerBloc.
     return BlocBuilder<TrackPlayerBloc, TrackPlayerState>(
       bloc: _trackBloc,
@@ -157,77 +182,77 @@ class _PlayerSectionState extends State<_PlayerSection> {
             state.status != PlayerStatus.initial &&
             state.status != PlayerStatus.loading;
 
-        return Column(
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Slider(
-              value: state.currentPosition.inSeconds.toDouble(),
-              // Ensure max value is at least 1.0 to avoid errors if duration is zero.
-              max: state.totalDuration.inSeconds > 0
-                  ? state.totalDuration.inSeconds.toDouble()
-                  : 1.0,
-              onChanged: canInteract
-                  ? (value) {
-                      // Dispatch a seek event when the user finishes dragging the slider.
-                      _trackBloc.add(
-                        SeekRequested(Duration(seconds: value.round())),
-                      );
-                    }
-                  : null, // Disable slider interaction
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(_formatDuration(state.currentPosition)),
-                Text(_formatDuration(state.totalDuration)),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                const IconButton(
-                  icon: Icon(Icons.shuffle, size: 28),
-                  onPressed: null,
-                ),
-                const IconButton(
-                  icon: Icon(Icons.skip_previous, size: 36),
-                  onPressed: null,
-                ),
-
-                // Show a loading indicator or the play/pause button based on state.
-                if (state.status == PlayerStatus.loading)
-                  const SizedBox(
-                    height: 72,
-                    width: 72,
-                    child: CircularProgressIndicator(),
-                  )
-                else
-                  IconButton(
-                    iconSize: 72,
-                    icon: Icon(
-                      isPlaying ? Icons.pause_circle : Icons.play_circle,
-                    ),
-                    // Dispatch Play or Pause events on tap.
-                    onPressed: canInteract
-                        ? () {
-                            if (isPlaying) {
-                              _trackBloc.add(PauseRequested());
-                            } else {
-                              _trackBloc.add(PlayRequested());
-                            }
+            Expanded(
+              child: Column(
+                children: [
+                  Slider(
+                    activeColor: theme.colorScheme.onSurface,
+                    value: state.currentPosition.inSeconds.toDouble(),
+                    // Ensure max value is at least 1.0 to avoid errors if duration is zero.
+                    max: state.totalDuration.inSeconds > 0
+                        ? state.totalDuration.inSeconds.toDouble()
+                        : 1.0,
+                    onChanged: canInteract
+                        ? (value) {
+                            // Dispatch a seek event when the user finishes dragging the slider.
+                            _trackBloc.add(
+                              SeekRequested(Duration(seconds: value.round())),
+                            );
                           }
-                        : null,
+                        : null, // Disable slider interaction
                   ),
-                const IconButton(
-                  icon: Icon(Icons.skip_next, size: 36),
-                  onPressed: null,
-                ),
-                const IconButton(
-                  icon: Icon(Icons.repeat, size: 28),
-                  onPressed: null,
-                ),
-              ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(width: 20),
+                      Text(
+                        _formatDuration(state.currentPosition),
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        _formatDuration(state.totalDuration),
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
+            if (state.status == PlayerStatus.loading)
+              const SizedBox(
+                height: 72,
+                width: 72,
+                child: CircularProgressIndicator(),
+              )
+            else
+              IconButton(
+                iconSize: 72,
+                icon: Icon(
+                  isPlaying
+                      ? Icons.pause_circle_rounded
+                      : Icons.play_circle_rounded,
+                ),
+                // Dispatch Play or Pause events on tap.
+                onPressed: canInteract
+                    ? () {
+                        if (isPlaying) {
+                          _trackBloc.add(PauseRequested());
+                        } else {
+                          _trackBloc.add(PlayRequested());
+                        }
+                      }
+                    : null,
+              ),
           ],
         );
       },
