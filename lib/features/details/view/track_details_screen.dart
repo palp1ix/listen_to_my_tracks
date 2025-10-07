@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:listen_to_my_tracks/app/resources/colors.dart';
 import 'package:listen_to_my_tracks/domain/entities/track.dart';
 import 'package:listen_to_my_tracks/features/details/bloc/track_player_bloc.dart';
 import 'package:share_plus/share_plus.dart';
@@ -40,25 +41,35 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
           },
         ),
         actions: [
-          PopupMenuButton<void>(
-            onSelected: (_) {
-              SharePlus.instance.share(
-                ShareParams(uri: Uri(path: widget.track.link)),
+          // We use a Builder to get a context that is a descendant of the IconButton.
+          // This is crucial for correctly finding the RenderBox of the button.
+          Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(Icons.ios_share),
+                onPressed: () {
+                  // Find the RenderBox of the IconButton to get its size and position.
+                  final RenderBox? box =
+                      context.findRenderObject() as RenderBox?;
+
+                  if (box != null) {
+                    // The share method needs the global position of the button.
+                    final Rect sharePositionOrigin =
+                        box.localToGlobal(Offset.zero) & box.size;
+
+                    // Now we call share, providing the link and the origin rectangle.
+                    SharePlus.instance.share(
+                      ShareParams(
+                        title: 'Check out this track!',
+                        subject: 'deezer.com',
+                        uri: Uri(path: widget.track.link),
+                        sharePositionOrigin: sharePositionOrigin,
+                      ),
+                    );
+                  }
+                },
               );
             },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<void>>[
-              const PopupMenuItem<void>(
-                value: null,
-                child: Row(
-                  children: [
-                    Icon(Icons.share),
-                    SizedBox(width: 8),
-                    Text('Share'),
-                  ],
-                ),
-              ),
-            ],
-            icon: const Icon(Icons.more_vert),
           ),
         ],
       ),
@@ -75,7 +86,46 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
             SizedBox(height: 20),
             // The _PlayerSection is now connected to the BLoC.
             _PlayerSection(widget.track),
-            const Spacer(flex: 2),
+            SizedBox(height: 20),
+            WarningWidget(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class WarningWidget extends StatelessWidget {
+  const WarningWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.warning, width: 1.5),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.dangerous_rounded, color: AppColors.warning, size: 45),
+            SizedBox(width: 10),
+            Flexible(
+              child: Text(
+                'You can only play 30 seconds of this track. API has this limitation.',
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ],
         ),
       ),
