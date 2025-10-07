@@ -45,10 +45,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // A dedicated widget for the loaded state.
 // This keeps the main build method clean and focused on state management logic.
-class _HomeLoadedView extends StatelessWidget {
+class _HomeLoadedView extends StatefulWidget {
   const _HomeLoadedView({required this.chart});
 
   final List<TrackEntity> chart;
+
+  @override
+  State<_HomeLoadedView> createState() => _HomeLoadedViewState();
+}
+
+class _HomeLoadedViewState extends State<_HomeLoadedView> {
+  late final HomeBloc _homeBloc;
+
+  @override
+  void initState() {
+    _homeBloc = context.read<HomeBloc>();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,13 +73,39 @@ class _HomeLoadedView extends StatelessWidget {
           const SliverToBoxAdapter(child: SearchActionCard()),
           const SliverToBoxAdapter(child: SectionHeader(title: 'Top Charts')),
 
-          SliverList.builder(
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              final track = chart[index];
-              return ChartTrackListItem(track: track, rank: index + 1);
-            },
-          ),
+          widget.chart.isNotEmpty
+              ? SliverList.builder(
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    final track = widget.chart[index];
+                    return ChartTrackListItem(track: track, rank: index + 1);
+                  },
+                )
+              : SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 16,
+                    ),
+                    child: Center(
+                      child: Column(
+                        children: [
+                          Text(
+                            'No tracks available in your region. Try to use VPN',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              _homeBloc.add(HomeScreenStarted());
+                            },
+                            child: Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
         ],
       ),
     );

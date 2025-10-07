@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:listen_to_my_tracks/app/di/service_locator.dart';
 import 'package:listen_to_my_tracks/app/resources/theme.dart';
 import 'package:listen_to_my_tracks/app/router/router.dart';
+import 'package:listen_to_my_tracks/features/details/bloc/track_player_bloc.dart';
 import 'package:listen_to_my_tracks/features/home/bloc/home_bloc.dart';
 import 'package:listen_to_my_tracks/features/search/bloc/search_bloc.dart';
 
@@ -31,6 +32,7 @@ class _MainAppState extends State<MainApp> {
       providers: [
         BlocProvider(create: (_) => sl<HomeBloc>()),
         BlocProvider(create: (_) => sl<SearchBloc>()),
+        BlocProvider(create: (_) => sl<TrackPlayerBloc>()),
       ],
       child: MaterialApp.router(
         // The light theme is the default.
