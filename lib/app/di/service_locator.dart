@@ -3,7 +3,9 @@ import 'package:get_it/get_it.dart';
 import 'package:listen_to_my_tracks/data/datasources/music_remote_datasource.dart';
 import 'package:listen_to_my_tracks/data/datasources/search_history_local_datasource.dart';
 import 'package:listen_to_my_tracks/data/repositories/music_repository_impl.dart';
+import 'package:listen_to_my_tracks/data/repositories/search_history_repository_impl.dart';
 import 'package:listen_to_my_tracks/domain/repositories/music_repository.dart';
+import 'package:listen_to_my_tracks/domain/repositories/search_history_repository.dart';
 import 'package:listen_to_my_tracks/domain/services/audio_player_service.dart';
 import 'package:listen_to_my_tracks/features/details/bloc/track_player_bloc.dart';
 import 'package:listen_to_my_tracks/features/home/bloc/home_bloc.dart';
@@ -29,9 +31,13 @@ Future<void> configureDependencies() async {
     );
 
   // --- Repositories ---
-  sl.registerLazySingleton<MusicRepository>(
-    () => MusicRepositoryImpl(remoteDataSource: sl()),
-  );
+  sl
+    ..registerLazySingleton<MusicRepository>(
+      () => MusicRepositoryImpl(remoteDataSource: sl()),
+    )
+    ..registerLazySingleton<SearchHistoryRepository>(
+      () => SearchHistoryRepositoryImpl(localDataSource: sl()),
+    );
 
   // --- Services ---
   sl.registerLazySingleton<AudioPlayerService>(() => AudioPlayerService());
@@ -39,7 +45,7 @@ Future<void> configureDependencies() async {
   // --- BLoCs ---
   sl
     ..registerFactory<HomeBloc>(() => HomeBloc(sl()))
-    ..registerFactory<SearchBloc>(() => SearchBloc(sl()))
+    ..registerFactory<SearchBloc>(() => SearchBloc(sl(), sl()))
     ..registerFactory<TrackPlayerBloc>(
       () => TrackPlayerBloc(audioPlayerService: sl()),
     );

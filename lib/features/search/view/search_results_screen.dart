@@ -26,6 +26,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
     super.initState();
     // DI logic is left as is, as requested.
     _searchBloc = context.read<SearchBloc>();
+    _searchBloc.add(HistoryRequested());
     _controller = TextEditingController();
     _focusNode = FocusNode();
 
@@ -85,10 +86,13 @@ class _SearchResultsBody extends StatelessWidget {
       bloc: searchBloc,
       builder: (context, state) {
         return switch (state) {
-          SearchInitial() => const _InfoView(
-            icon: Icons.search_rounded,
-            message: 'Please enter a search query.',
-          ),
+          SearchInitial() =>
+            state.history.isEmpty
+                ? const _InfoView(
+                    icon: Icons.search_rounded,
+                    message: 'Please enter a search query.',
+                  )
+                : _SearchHistoryView(state.history),
           SearchLoading() => const Center(child: CircularProgressIndicator()),
           SearchFailure(:final message) => _ErrorView(message: message),
           SearchSuccess(:final results) =>
@@ -99,6 +103,30 @@ class _SearchResultsBody extends StatelessWidget {
                   )
                 : _ResultsListView(results: results),
         };
+      },
+    );
+  }
+}
+
+class _SearchHistoryView extends StatelessWidget {
+  const _SearchHistoryView(this.history);
+
+  final List<String> history;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: history.length,
+      itemBuilder: (context, index) {
+        final term = history[index];
+        return ListTile(
+          leading: const Icon(Icons.history_rounded),
+          title: Text(term),
+          onTap: () {
+            // Trigger a search when a history item is tapped.
+            context.read<SearchBloc>().add(SearchRequested(term));
+          },
+        );
       },
     );
   }
