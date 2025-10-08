@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:listen_to_my_tracks/data/datasources/music_remote_datasource.dart';
+import 'package:listen_to_my_tracks/data/datasources/search_history_local_datasource.dart';
 import 'package:listen_to_my_tracks/data/repositories/music_repository_impl.dart';
 import 'package:listen_to_my_tracks/domain/repositories/music_repository.dart';
 import 'package:listen_to_my_tracks/domain/services/audio_player_service.dart';
@@ -19,9 +20,13 @@ Future<void> configureDependencies() async {
   );
 
   // --- Data Sources ---
-  sl.registerLazySingleton<MusicRemoteDataSource>(
-    () => MusicRemoteDataSourceImpl(dio: sl()),
-  );
+  sl
+    ..registerLazySingleton<MusicRemoteDataSource>(
+      () => MusicRemoteDataSourceImpl(dio: sl()),
+    )
+    ..registerLazySingleton<SearchHistoryLocalDataSource>(
+      () => SearchHistoryLocalDataSourceImpl(),
+    );
 
   // --- Repositories ---
   sl.registerLazySingleton<MusicRepository>(
@@ -29,9 +34,7 @@ Future<void> configureDependencies() async {
   );
 
   // --- Services ---
-  sl.registerLazySingleton<AudioPlayerService>(
-    () => AudioPlayerService(),
-  );
+  sl.registerLazySingleton<AudioPlayerService>(() => AudioPlayerService());
 
   // --- BLoCs ---
   sl
