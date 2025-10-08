@@ -17,7 +17,12 @@ final class SearchInitial extends SearchState {
 }
 
 
-final class SearchLoading extends SearchState {}
+final class SearchLoading extends SearchState {
+  final String query;
+  const SearchLoading(this.query);
+  @override
+  List<Object> get props => [query];
+}
 
 // Search failure state
 final class SearchFailure extends SearchState {

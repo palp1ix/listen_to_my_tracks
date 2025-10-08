@@ -40,7 +40,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   }
 
   FutureOr<void> _onSearchRequested(event, emit) async {
-    emit(SearchLoading());
+    emit(SearchLoading(event.query));
     // Save the search term to history asynchronously.
     await _saveSearchTerm(event.query);
     // Perform the search using the repository.

@@ -50,23 +50,38 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        // Using a Column to structure the main sections of the screen:
-        // the search bar and the results body.
         child: Column(
           children: [
             CustomSearchBar(
               controller: _controller,
               focusNode: _focusNode,
               onSubmitted: (query) {
-                // Hide keyboard on submit
                 _focusNode.unfocus();
                 _searchBloc.add(SearchRequested(query));
               },
             ),
             const SizedBox(height: 10),
-            // The Expanded widget ensures the results body takes up
-            // all available vertical space.
-            Expanded(child: _SearchResultsBody(searchBloc: _searchBloc)),
+            Expanded(
+              // The BlocListener will handle UI side-effects, like updating the controller,
+              // without triggering a rebuild of the entire screen.
+              child: BlocListener<SearchBloc, SearchState>(
+                bloc: _searchBloc,
+                // We use listenWhen to ensure this logic only runs when a search starts.
+                // This prevents the text field from being updated on every state change.
+                listenWhen: (previous, current) =>
+                    previous is! SearchLoading && current is SearchLoading,
+                listener: (context, state) {
+                  if (state is SearchLoading) {
+                    // Update controller's text if it doesn't match the query.
+                    if (_controller.text != state.query) {
+                      _controller.text = state.query;
+                    }
+                  }
+                },
+                // The body now only cares about building the UI based on the state.
+                child: _SearchResultsBody(),
+              ),
+            ),
           ],
         ),
       ),
@@ -74,25 +89,26 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   }
 }
 
-// This widget handles the presentation logic based on the SearchBloc's state.
 class _SearchResultsBody extends StatelessWidget {
-  const _SearchResultsBody({required this.searchBloc});
-
-  final SearchBloc searchBloc;
+  // We can remove the searchBloc property, as we can access it via context.
+  const _SearchResultsBody();
 
   @override
   Widget build(BuildContext context) {
+    // Access the BLoC from the context, which is cleaner.
     return BlocBuilder<SearchBloc, SearchState>(
-      bloc: searchBloc,
       builder: (context, state) {
         return switch (state) {
-          SearchInitial() =>
-            state.history.isEmpty
+          SearchInitial(
+            :final history,
+          ) => // Use pattern matching for cleaner code
+            history.isEmpty
                 ? const _InfoView(
                     icon: Icons.search_rounded,
                     message: 'Please enter a search query.',
                   )
-                : _SearchHistoryView(state.history),
+                // We no longer pass the controller here.
+                : _SearchHistoryView(history),
           SearchLoading() => const Center(child: CircularProgressIndicator()),
           SearchFailure(:final message) => _ErrorView(message: message),
           SearchSuccess(:final results) =>
@@ -115,12 +131,17 @@ class _SearchHistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return ListView.builder(
       itemCount: history.length,
       itemBuilder: (context, index) {
         final term = history[index];
         return ListTile(
-          leading: const Icon(Icons.history_rounded),
+          leading: Icon(
+            Icons.history_rounded,
+            color: theme.colorScheme.onSurface,
+          ),
           title: Text(term),
           onTap: () {
             // Trigger a search when a history item is tapped.
