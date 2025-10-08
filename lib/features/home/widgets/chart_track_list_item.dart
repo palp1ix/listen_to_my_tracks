@@ -1,5 +1,7 @@
 // The list item for the chart, including its rank.
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:listen_to_my_tracks/app/router/router.gr.dart';
 import 'package:listen_to_my_tracks/core/widgets/track_list_tile.dart';
 import 'package:listen_to_my_tracks/domain/entities/track.dart';
 
@@ -36,6 +38,12 @@ class ChartTrackListItem extends StatelessWidget {
               imageUrl: track.album.coverUrl,
               trackTitle: track.title,
               artist: track.artist.name,
+              onTap: () {
+                // Navigate to track details on tap.
+                context.router.push(
+                  TrackDetailsRoute(track: track),
+                );
+              },
             ),
           ),
         ],

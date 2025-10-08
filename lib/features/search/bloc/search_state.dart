@@ -7,10 +7,22 @@ sealed class SearchState extends Equatable {
   List<Object> get props => [];
 }
 
-final class SearchInitial extends SearchState {}
+final class SearchInitial extends SearchState {
+  const SearchInitial({this.history = const []});
+
+  final List<String> history;
+
+  @override
+  List<Object> get props => [history];
+}
 
 
-final class SearchLoading extends SearchState {}
+final class SearchLoading extends SearchState {
+  final String query;
+  const SearchLoading(this.query);
+  @override
+  List<Object> get props => [query];
+}
 
 // Search failure state
 final class SearchFailure extends SearchState {

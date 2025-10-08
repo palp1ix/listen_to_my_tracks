@@ -7,6 +7,10 @@ sealed class SearchEvent extends Equatable {
   List<Object> get props => [];
 }
 
+final class HistoryRequested extends SearchEvent {
+  const HistoryRequested();
+}
+
 final class SearchRequested extends SearchEvent {
   const SearchRequested(this.query);
 
