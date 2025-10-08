@@ -121,9 +121,10 @@ class WarningWidget extends StatelessWidget {
               Flexible(
                 child: Text(
                   'You can only play 30 seconds of this track. API has this limitation.',
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.start,
                   maxLines: 2,
                   style: theme.textTheme.bodyLarge?.copyWith(
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -171,20 +172,52 @@ class _TrackInfoSection extends StatelessWidget {
 }
 
 // This widget also remains unchanged.
-class _AlbumArtSection extends StatelessWidget {
+class _AlbumArtSection extends StatefulWidget {
   const _AlbumArtSection({required this.coverUrl});
   final String coverUrl;
 
   @override
+  State<_AlbumArtSection> createState() => _AlbumArtSectionState();
+}
+
+class _AlbumArtSectionState extends State<_AlbumArtSection> {
+  late final TrackPlayerBloc _playerBloc;
+  // Track whether the player is currently playing or paused to adjust padding.
+  bool _isPlaying = false;
+
+  @override
+  void initState() {
+    _playerBloc = context.read<TrackPlayerBloc>();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // ... no changes here
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Image.network(coverUrl, fit: BoxFit.cover),
+    return BlocListener<TrackPlayerBloc, TrackPlayerState>(
+      bloc: _playerBloc,
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (context, state) {
+        if (state.status == PlayerStatus.playing) {
+          setState(() {
+            _isPlaying = true;
+          });
+        } else if (state.status == PlayerStatus.paused ||
+            state.status == PlayerStatus.completed ||
+            state.status == PlayerStatus.error) {
+          setState(() {
+            _isPlaying = false;
+          });
+        }
+      },
+      child: AnimatedPadding(
+        duration: Duration(milliseconds: 100),
+        padding: EdgeInsets.symmetric(horizontal: _isPlaying ? 20 : 30),
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.network(widget.coverUrl, fit: BoxFit.cover),
+          ),
         ),
       ),
     );

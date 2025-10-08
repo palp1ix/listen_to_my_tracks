@@ -5,7 +5,7 @@ class TrackListTile extends StatelessWidget {
     super.key,
     required this.imageUrl,
     required this.trackTitle,
-    required this.artist, 
+    required this.artist,
     required this.onTap,
   });
 
