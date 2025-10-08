@@ -8,5 +8,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: HomeRoute.page, initial: true),
     AutoRoute(page: SearchResultsRoute.page),
     AutoRoute(page: TrackDetailsRoute.page),
+    AutoRoute(page: ArtistTracksRoute.page),
   ];
 }

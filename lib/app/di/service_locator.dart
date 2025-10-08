@@ -7,6 +7,7 @@ import 'package:listen_to_my_tracks/data/repositories/search_history_repository_
 import 'package:listen_to_my_tracks/domain/repositories/music_repository.dart';
 import 'package:listen_to_my_tracks/domain/repositories/search_history_repository.dart';
 import 'package:listen_to_my_tracks/domain/services/audio_player_service.dart';
+import 'package:listen_to_my_tracks/features/artist_tracks/bloc/artist_tracks_bloc.dart';
 import 'package:listen_to_my_tracks/features/details/bloc/track_player_bloc.dart';
 import 'package:listen_to_my_tracks/features/home/bloc/home_bloc.dart';
 import 'package:listen_to_my_tracks/features/search/bloc/search_bloc.dart';
@@ -48,5 +49,6 @@ Future<void> configureDependencies() async {
     ..registerFactory<SearchBloc>(() => SearchBloc(sl(), sl()))
     ..registerFactory<TrackPlayerBloc>(
       () => TrackPlayerBloc(audioPlayerService: sl()),
-    );
+    )
+    ..registerFactory<ArtistTracksBloc>(() => ArtistTracksBloc(sl()));
 }

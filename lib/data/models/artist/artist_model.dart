@@ -18,7 +18,7 @@ class ArtistModel extends Equatable {
   // to our 'imageUrl' property. This keeps our model's naming conventions
   // clean and consistent with Dart standards.
   @JsonKey(name: 'picture_big')
-  final String imageUrl;
+  final String? imageUrl;
 
   // Factory constructor for creating an instance from JSON.
   factory ArtistModel.fromJson(Map<String, dynamic> json) =>

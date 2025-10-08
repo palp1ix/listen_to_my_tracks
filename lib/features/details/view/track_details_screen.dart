@@ -2,6 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:listen_to_my_tracks/app/resources/colors.dart';
+import 'package:listen_to_my_tracks/app/router/router.gr.dart';
+import 'package:listen_to_my_tracks/domain/entities/artist.dart';
 import 'package:listen_to_my_tracks/domain/entities/track.dart';
 import 'package:listen_to_my_tracks/features/details/bloc/track_player_bloc.dart';
 import 'package:share_plus/share_plus.dart';
@@ -79,7 +81,7 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
           children: [
             _TrackInfoSection(
               title: widget.track.title,
-              artist: widget.track.artist.name,
+              artist: widget.track.artist,
             ),
             SizedBox(height: 20),
             _AlbumArtSection(coverUrl: widget.track.album.coverUrl),
@@ -141,11 +143,10 @@ class WarningWidget extends StatelessWidget {
 class _TrackInfoSection extends StatelessWidget {
   const _TrackInfoSection({required this.title, required this.artist});
   final String title;
-  final String artist;
+  final ArtistEntity artist;
 
   @override
   Widget build(BuildContext context) {
-    // ... no changes here
     final textTheme = Theme.of(context).textTheme;
     return Column(
       children: [
@@ -156,15 +157,19 @@ class _TrackInfoSection extends StatelessWidget {
           ),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 8),
-        Text(
-          artist,
-          style: textTheme.titleLarge?.copyWith(
-            color: Theme.of(
-              context,
-            ).colorScheme.onSurface.withValues(alpha: 0.7),
+        TextButton(
+          onPressed: () {
+            context.router.push(ArtistTracksRoute(artist: artist));
+          },
+          child: Text(
+            artist.name,
+            style: textTheme.titleLarge?.copyWith(
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.7),
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
         ),
       ],
     );
