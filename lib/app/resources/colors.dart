@@ -7,8 +7,8 @@ abstract class AppColors {
   const AppColors._();
 
   // Main Palette Colors
-  static const Color primary = Color(0xFF6A5AE0);
-  static const Color primaryLight = Color(0xFF8A7DFF);
+  static const Color primary = Color(0xFF2ec4b6);
+  static const Color primaryLight = Color(0xFF55dde0);
   
   // Light Theme Colors
   static const Color lightBackground = Color(0xFFF7F7FA);

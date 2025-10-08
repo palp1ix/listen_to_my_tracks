@@ -86,7 +86,7 @@ class _SearchResultsBody extends StatelessWidget {
       builder: (context, state) {
         return switch (state) {
           SearchInitial() => const _InfoView(
-            icon: Icons.search,
+            icon: Icons.search_rounded,
             message: 'Please enter a search query.',
           ),
           SearchLoading() => const Center(child: CircularProgressIndicator()),
@@ -125,9 +125,7 @@ class _ResultsListView extends StatelessWidget {
           imageUrl: track.album.coverUrl,
           onTap: () {
             // Navigate to track details on tap.
-            context.router.push(
-              TrackDetailsRoute(track: track),
-            );
+            context.router.push(TrackDetailsRoute(track: track));
           },
         );
       },
@@ -158,6 +156,7 @@ class _InfoView extends StatelessWidget {
           Text(
             message,
             style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
               color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
             ),
           ),
