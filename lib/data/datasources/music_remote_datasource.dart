@@ -7,6 +7,7 @@ import 'package:listen_to_my_tracks/data/models/track/track_model.dart';
 abstract interface class MusicRemoteDataSource {
   Future<List<TrackModel>> searchTracks({required String query});
   Future<List<TrackModel>> getChart();
+  Future<List<TrackModel>> getArtistTracks({required int artistId});
 }
 
 // Concrete implementation of the data source using the Dio package.
@@ -44,7 +45,7 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
     }
   }
 
-    @override
+  @override
   Future<List<TrackModel>> getChart() async {
     try {
       final response = await _dio.get('/chart');
@@ -52,8 +53,45 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
       if (response.statusCode == 200) {
         // The API wraps the list of tracks in a 'data' object.
         // The TrackSearchResponse model is used to parse this structure.
-        final searchResult = TrackSearchResponse.fromJson(response.data['tracks']);
+        final searchResult = TrackSearchResponse.fromJson(
+          response.data['tracks'],
+        );
         return searchResult.data;
+      } else {
+        // Handle non-200 responses as server exceptions.
+        throw ServerException(
+          message: 'Failed to load tracks: ${response.statusMessage}',
+        );
+      }
+    } on DioException catch (e) {
+      // DioException is caught to provide more specific error types.
+      // This helps in distinguishing between network issues and server errors.
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const NetworkException();
+      }
+      throw ServerException(message: e.message ?? 'An unknown error occurred');
+    }
+  }
+
+  @override
+  Future<List<TrackModel>> getArtistTracks({required int artistId}) async {
+    try {
+      final response = await _dio.get(
+        '/artist/$artistId/top',
+        queryParameters: {
+          'limit': 50, // Fetch top 50 tracks for the artist
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // The API wraps the list of tracks in a 'data' object.
+        // The TrackSearchResponse model is used to parse this structure.
+        final artistTracks = TrackSearchResponse.fromJson(
+          response.data,
+        );
+        return artistTracks.data;
       } else {
         // Handle non-200 responses as server exceptions.
         throw ServerException(
