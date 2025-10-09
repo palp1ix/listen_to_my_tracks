@@ -158,9 +158,7 @@ class _TrackInfoSection extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         TextButton(
-          onPressed: () {
-            context.router.push(ArtistTracksRoute(artist: artist));
-          },
+          onPressed: () => _onArtistPressed(context),
           child: Text(
             artist.name,
             style: textTheme.titleLarge?.copyWith(
@@ -173,6 +171,25 @@ class _TrackInfoSection extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  // Call this method when the artist name is pressed.
+  void _onArtistPressed(BuildContext context) {
+    // Get the current navigation stack
+    final stack = context.router.stack;
+
+    // Check if the previous route is ArtistTracksRoute
+    if (stack.length > 1 &&
+        stack[stack.length - 2].name == ArtistTracksRoute.name) {
+      // If it is, we pop back to it instead of pushing a new one
+      context.router.back();
+    } else {
+      // Otherwise, we push a new ArtistTracksRoute
+      context.router.push(ArtistTracksRoute(artist: artist));
+    }
+    
+    // Pause the track when navigating away
+    context.read<TrackPlayerBloc>().add(PauseRequested());
   }
 }
 
