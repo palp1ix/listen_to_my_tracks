@@ -1,11 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:listen_to_my_tracks/app/resources/colors.dart';
 import 'package:listen_to_my_tracks/app/router/router.gr.dart';
 import 'package:listen_to_my_tracks/domain/entities/artist.dart';
 import 'package:listen_to_my_tracks/domain/entities/track.dart';
 import 'package:listen_to_my_tracks/features/details/bloc/track_player_bloc.dart';
+import 'package:listen_to_my_tracks/features/details/widgets/warning_widget.dart';
 import 'package:share_plus/share_plus.dart';
 
 @RoutePage()
@@ -91,48 +91,6 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
             SizedBox(height: 20),
             WarningWidget(),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class WarningWidget extends StatelessWidget {
-  const WarningWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.warning.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.warning, width: 1.5),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.dangerous_rounded, color: AppColors.warning, size: 45),
-              SizedBox(width: 10),
-              Flexible(
-                child: Text(
-                  'You can only play 30 seconds of this track. API has this limitation.',
-                  textAlign: TextAlign.start,
-                  maxLines: 2,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

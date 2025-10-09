@@ -228,18 +228,7 @@ class _ErrorView extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Error: $message', textAlign: TextAlign.center),
-            // TODO: Implement retry logic. It would require storing the last
-            // searched query to dispatch the event again.
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                /* Retry logic here */
-              },
-              child: const Text('Retry'),
-            ),
-          ],
+          children: [Text('Error: $message', textAlign: TextAlign.center)],
         ),
       ),
     );
