@@ -42,4 +42,24 @@ class MockMusicRemoteDataSource extends _i1.Mock
             ),
           )
           as _i3.Future<List<_i4.TrackModel>>);
+
+  @override
+  _i3.Future<List<_i4.TrackModel>> getChart() =>
+      (super.noSuchMethod(
+            Invocation.method(#getChart, []),
+            returnValue: _i3.Future<List<_i4.TrackModel>>.value(
+              <_i4.TrackModel>[],
+            ),
+          )
+          as _i3.Future<List<_i4.TrackModel>>);
+
+  @override
+  _i3.Future<List<_i4.TrackModel>> getArtistTracks({required int? artistId}) =>
+      (super.noSuchMethod(
+            Invocation.method(#getArtistTracks, [], {#artistId: artistId}),
+            returnValue: _i3.Future<List<_i4.TrackModel>>.value(
+              <_i4.TrackModel>[],
+            ),
+          )
+          as _i3.Future<List<_i4.TrackModel>>);
 }

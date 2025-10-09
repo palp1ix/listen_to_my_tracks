@@ -30,6 +30,8 @@ dev_dependencies:
   json_serializable: ^6.11.1
   flutter_launcher_icons: ^0.14.4
   mockito: ^5.5.0
+  sqflite_common_ffi: ^2.3.0
+  bloc_test: ^10.0.0
 
 
 flutter_launcher_icons:
