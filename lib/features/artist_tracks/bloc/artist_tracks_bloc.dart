@@ -18,12 +18,12 @@ class ArtistTracksBloc extends Bloc<ArtistTracksEvent, ArtistTracksState> {
   FutureOr<void> _onLoadArtistTracks(event, emit) async {
     emit(ArtistTracksLoading());
     final result = await _musicRepository.getArtistTracks(event.artistId);
-  
+
     switch (result) {
       case Success(value: final tracks):
-        emit(ArtistTracksLoaded(tracks));
+        emit(ArtistTracksLoaded(tracks, event.artistId));
       case Failure(exception: final exception):
-        emit(ArtistTracksError(exception.message));
+        emit(ArtistTracksError(exception.message, event.artistId));
     }
   }
 }
