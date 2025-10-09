@@ -9,7 +9,7 @@ part of 'artist_model.dart';
 ArtistModel _$ArtistModelFromJson(Map<String, dynamic> json) => ArtistModel(
   id: (json['id'] as num).toInt(),
   name: json['name'] as String,
-  imageUrl: json['picture_big'] as String,
+  imageUrl: json['picture_big'] as String?,
 );
 
 Map<String, dynamic> _$ArtistModelToJson(ArtistModel instance) =>

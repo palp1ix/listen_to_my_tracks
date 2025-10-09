@@ -24,7 +24,7 @@ extension ArtistModelMapper on ArtistModel {
     return ArtistEntity(
       id: id,
       name: name,
-      imageUrl: imageUrl,
+      imageUrl: imageUrl ?? "", // Provide a default empty string if imageUrl is null
     );
   }
 }
