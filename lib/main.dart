@@ -43,6 +43,8 @@ class _MainAppState extends State<MainApp> {
         darkTheme: AppTheme.darkTheme,
         // This makes the app theme react to system settings.
         themeMode: ThemeMode.system,
+        // Disable the debug banner.
+        debugShowCheckedModeBanner: false,
         // Router configuration
         routerConfig: _router.config(),
       ),

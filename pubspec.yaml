@@ -28,6 +28,15 @@ dev_dependencies:
   auto_route_generator: ^10.2.4
   build_runner: ^2.7.1
   json_serializable: ^6.11.1
+  flutter_launcher_icons: ^0.14.4
+
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/images/play.png"
+  min_sdk_android: 21
 
 
 flutter:
