@@ -7,6 +7,8 @@ import 'package:listen_to_my_tracks/domain/entities/track.dart';
 import 'package:listen_to_my_tracks/features/details/bloc/track_player_bloc.dart';
 import 'package:listen_to_my_tracks/features/details/widgets/warning_widget.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:dio/dio.dart';
+import 'dart:typed_data';
 
 @RoutePage()
 class TrackDetailsScreen extends StatefulWidget {
@@ -46,30 +48,10 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
           // We use a Builder to get a context that is a descendant of the IconButton.
           // This is crucial for correctly finding the RenderBox of the button.
           Builder(
-            builder: (BuildContext context) {
+            builder: (BuildContext buttonContext) {
               return IconButton(
                 icon: const Icon(Icons.ios_share),
-                onPressed: () {
-                  // Find the RenderBox of the IconButton to get its size and position.
-                  final RenderBox? box =
-                      context.findRenderObject() as RenderBox?;
-
-                  if (box != null) {
-                    // The share method needs the global position of the button.
-                    final Rect sharePositionOrigin =
-                        box.localToGlobal(Offset.zero) & box.size;
-
-                    // Now we call share, providing the link and the origin rectangle.
-                    SharePlus.instance.share(
-                      ShareParams(
-                        title: 'Check out this track!',
-                        subject: 'deezer.com',
-                        uri: Uri(path: widget.track.link),
-                        sharePositionOrigin: sharePositionOrigin,
-                      ),
-                    );
-                  }
-                },
+                onPressed: () => _onSharePressed(buttonContext),
               );
             },
           ),
@@ -92,6 +74,54 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
             WarningWidget(),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _onSharePressed(BuildContext anchorContext) async {
+    // Find the RenderBox of the IconButton to get its size and position.
+    final RenderBox? box = anchorContext.findRenderObject() as RenderBox?;
+
+    if (box == null) return;
+
+    // The share method needs the global position of the button.
+    final Rect sharePositionOrigin = box.localToGlobal(Offset.zero) & box.size;
+
+    // Prepare share text (ensure https URL so iOS resolves more targets like Messages/Telegram)
+    final String trackUrl = widget.track.link;
+    final String shareText = 'Check out this track! $trackUrl';
+
+    // Try to fetch album cover and attach as image to improve preview on iOS.
+    List<XFile> files = [];
+    try {
+      final coverUrl = widget.track.album.coverUrl;
+      if (coverUrl.isNotEmpty) {
+        final response = await Dio().get<List<int>>(
+          coverUrl,
+          options: Options(responseType: ResponseType.bytes),
+        );
+        final bytes = response.data;
+        if (bytes != null && bytes.isNotEmpty) {
+          files = [
+            XFile.fromData(
+              Uint8List.fromList(bytes),
+              name: 'cover',
+              mimeType: 'image/jpeg',
+            ),
+          ];
+        }
+      }
+    } catch (_) {
+      // If download fails, we still proceed with URL/text sharing only.
+    }
+
+    // Use the new Share Plus v12 API with ShareParams.
+    SharePlus.instance.share(
+      ShareParams(
+        text: shareText,
+        subject: 'deezer.com',
+        files: files,
+        sharePositionOrigin: sharePositionOrigin,
       ),
     );
   }
