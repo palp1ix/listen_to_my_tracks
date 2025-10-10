@@ -72,17 +72,21 @@ flutter test integration_test
 ## Screenshots
 Below are sample screens from the app. All images are located in the `screenshots/` directory.
 
-![Home Screen](screenshots/home-screen.png)
-
-![Search Results](screenshots/search-results.png)
-
-![Search History](screenshots/search-history.png)
-
-![Empty Search History](screenshots/empty-search-history.png)
-
-![Artist Tracks](screenshots/artist-tracks.png)
-
-![Track Details](screenshots/track_details.png)
+<table>
+  <tr>
+    <td><img src="screenshots/home-screen.png" alt="Home Screen" width="400"></td>
+    <td><img src="screenshots/search-results.png" alt="Search Results" width="400"></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/search-history.png" alt="Search History" width="400"></td>
+    <td><img src="screenshots/empty-search-history.png" alt="Empty Search History" width="400"></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/artist-tracks.png" alt="Artist Tracks" width="400"></td>
+    <td><img src="screenshots/track_details.png" alt="Track Details" width="400"></td>
+  </tr>
+  
+</table>
 
 ## Project Scripts and Tips
 - Rebuild generated files when routes/models change:
